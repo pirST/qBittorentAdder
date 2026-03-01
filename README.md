@@ -8,9 +8,6 @@ A Chrome extension that intercepts magnet links and `.torrent` files and sends t
 - Automatically catch `.torrent` file downloads
 - Right-click context menu: "Add to qBittorrent"
 - Category selection dialog with "remember last" option
-- Popup for manually adding magnet links or `.torrent` files
-- Desktop and in-page toast notifications
-- CSRF-safe requests via `declarativeNetRequest` header rewriting
 
 ## Installation
 
