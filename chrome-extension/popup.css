@@ -355,3 +355,51 @@ select option {
 .test-result.err {
     color: #721c24;
 }
+
+.section-desc {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #555;
+}
+
+.radio-label input[type="radio"] {
+    margin: 0;
+    width: auto;
+    cursor: pointer;
+    accent-color: #007bff;
+}
+
+textarea {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 12px;
+    font-family: monospace;
+    color: #333;
+    background: #fff;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    resize: vertical;
+}
+
+textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}

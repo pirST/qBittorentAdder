@@ -9,8 +9,12 @@ const fields = {
   autoStart: $('#autoStart'),
   autoTMM: $('#autoTMM'),
   showNotifications: $('#showNotifications'),
-  showConfirmation: $('#showConfirmation')
+  showConfirmation: $('#showConfirmation'),
+  siteList: $('#siteList')
 };
+
+const siteFilterRadios = document.querySelectorAll('input[name="siteFilterMode"]');
+const siteListField = $('#siteList-field');
 
 const btnTest = $('#btn-test');
 const testResult = $('#test-result');
@@ -31,6 +35,24 @@ async function loadSettings() {
   fields.autoTMM.checked = config.autoTMM !== false;
   fields.showNotifications.checked = config.showNotifications !== false;
   fields.showConfirmation.checked = config.showConfirmation !== false;
+
+  const filterMode = config.siteFilterMode || 'disabled';
+  for (const radio of siteFilterRadios) {
+    radio.checked = radio.value === filterMode;
+  }
+  fields.siteList.value = config.siteList || '';
+  toggleSiteListVisibility(filterMode);
+}
+
+function getSelectedFilterMode() {
+  for (const radio of siteFilterRadios) {
+    if (radio.checked) return radio.value;
+  }
+  return 'disabled';
+}
+
+function toggleSiteListVisibility(mode) {
+  siteListField.style.display = (mode === 'disabled') ? 'none' : '';
 }
 
 async function saveSettings() {
@@ -43,7 +65,9 @@ async function saveSettings() {
     autoStart: fields.autoStart.checked,
     autoTMM: fields.autoTMM.checked,
     showNotifications: fields.showNotifications.checked,
-    showConfirmation: fields.showConfirmation.checked
+    showConfirmation: fields.showConfirmation.checked,
+    siteFilterMode: getSelectedFilterMode(),
+    siteList: fields.siteList.value
   };
 
   await chrome.storage.local.set({ config });
@@ -88,5 +112,13 @@ for (const [, el] of Object.entries(fields)) {
 }
 
 btnTest.addEventListener('click', testConnection);
+
+for (const radio of siteFilterRadios) {
+  radio.addEventListener('change', () => {
+    toggleSiteListVisibility(radio.value);
+    saveNow();
+  });
+}
+fields.siteList.addEventListener('input', scheduleSave);
 
 loadSettings();

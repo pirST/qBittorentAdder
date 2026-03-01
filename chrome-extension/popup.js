@@ -42,8 +42,12 @@ const settingsFields = {
   autoStart: $('#autoStart'),
   autoTMM: $('#autoTMM'),
   showNotifications: $('#showNotifications'),
-  showConfirmation: $('#showConfirmation')
+  showConfirmation: $('#showConfirmation'),
+  siteList: $('#siteList')
 };
+
+const siteFilterRadios = $$('input[name="siteFilterMode"]');
+const siteListField = $('#siteList-field');
 
 const btnTest = $('#btn-test');
 const testResult = $('#test-result');
@@ -140,7 +144,23 @@ async function loadSettings() {
   settingsFields.autoTMM.checked = config.autoTMM !== false;
   settingsFields.showNotifications.checked = config.showNotifications !== false;
   settingsFields.showConfirmation.checked = config.showConfirmation !== false;
+
+  const filterMode = config.siteFilterMode || 'disabled';
+  siteFilterRadios.forEach(r => { r.checked = r.value === filterMode; });
+  settingsFields.siteList.value = config.siteList || '';
+  toggleSiteListVisibility(filterMode);
   toggleSavePathVisibility();
+}
+
+function getSelectedFilterMode() {
+  for (const radio of siteFilterRadios) {
+    if (radio.checked) return radio.value;
+  }
+  return 'disabled';
+}
+
+function toggleSiteListVisibility(mode) {
+  siteListField.style.display = (mode === 'disabled') ? 'none' : '';
 }
 
 async function saveSettings() {
@@ -153,7 +173,9 @@ async function saveSettings() {
     autoStart: settingsFields.autoStart.checked,
     autoTMM: settingsFields.autoTMM.checked,
     showNotifications: settingsFields.showNotifications.checked,
-    showConfirmation: settingsFields.showConfirmation.checked
+    showConfirmation: settingsFields.showConfirmation.checked,
+    siteFilterMode: getSelectedFilterMode(),
+    siteList: settingsFields.siteList.value
   };
 
   await chrome.storage.local.set({ config });
@@ -333,6 +355,14 @@ for (const [, el] of Object.entries(settingsFields)) {
 
 btnTest.addEventListener('click', testConnection);
 settingsFields.autoTMM.addEventListener('change', toggleSavePathVisibility);
+
+siteFilterRadios.forEach(radio => {
+  radio.addEventListener('change', () => {
+    toggleSiteListVisibility(radio.value);
+    saveNow();
+  });
+});
+settingsFields.siteList.addEventListener('input', scheduleSave);
 
 function toggleSavePathVisibility() {
   const field = $('#savePath-field');

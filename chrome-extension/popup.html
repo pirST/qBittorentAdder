@@ -102,6 +102,32 @@
       </div>
 
       <div class="card">
+        <h3>Site Filter</h3>
+        <p class="section-desc">Control which sites the extension intercepts on.</p>
+        <div class="field">
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="siteFilterMode" value="disabled" id="filter-disabled" checked>
+              <span>Disabled</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="siteFilterMode" value="allowlist" id="filter-allowlist">
+              <span>Allowlist only</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="siteFilterMode" value="blocklist" id="filter-blocklist">
+              <span>Blocklist</span>
+            </label>
+          </div>
+        </div>
+        <div class="field" id="siteList-field" style="display: none;">
+          <label for="siteList">Sites (one per line)</label>
+          <textarea id="siteList" rows="4" placeholder="rutracker.org&#10;example.com"></textarea>
+          <span class="hint">Subdomains included. Lines starting with # are ignored.</span>
+        </div>
+      </div>
+
+      <div class="card">
         <h3>Behavior</h3>
         <div class="field-row">
           <label class="checkbox-label">

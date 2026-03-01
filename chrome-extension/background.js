@@ -7,7 +7,9 @@ const DEFAULT_CONFIG = {
   autoStart: true,
   autoTMM: true,
   showNotifications: true,
-  showConfirmation: true
+  showConfirmation: true,
+  siteFilterMode: 'disabled',
+  siteList: ''
 };
 
 let sidValue = null;
@@ -31,6 +33,38 @@ async function resolveCategory(explicit) {
     cat = stored.lastCategory || '';
   }
   return cat;
+}
+
+// ============================================
+// SITE FILTER
+// ============================================
+
+function matchesSiteList(hostname, siteList) {
+  const domains = siteList.split('\n')
+    .map(d => d.trim().toLowerCase())
+    .filter(d => d && !d.startsWith('#'));
+  hostname = hostname.toLowerCase();
+  for (const domain of domains) {
+    if (hostname === domain || hostname.endsWith('.' + domain)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+async function isSiteAllowed(pageUrl) {
+  if (!pageUrl) return true;
+  const config = await getConfig();
+  if (!config.siteFilterMode || config.siteFilterMode === 'disabled') return true;
+  if (!config.siteList || !config.siteList.trim()) return true;
+
+  let hostname;
+  try { hostname = new URL(pageUrl).hostname; } catch (_) { return true; }
+
+  const matches = matchesSiteList(hostname, config.siteList);
+  if (config.siteFilterMode === 'allowlist') return matches;
+  if (config.siteFilterMode === 'blocklist') return !matches;
+  return true;
 }
 
 // ============================================
@@ -455,6 +489,7 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   const url = info.linkUrl;
   if (!url) return;
+  if (tab && tab.url && !await isSiteAllowed(tab.url)) return;
   const name = extractTorrentName(url);
 
   if (info.menuItemId === 'qbit-add-link') {
@@ -494,6 +529,14 @@ chrome.downloads.onCreated.addListener(async (item) => {
 
   const config = await getConfig();
   if (!config.url) return;
+
+  if (item.referrer && !await isSiteAllowed(item.referrer)) return;
+  if (!item.referrer) {
+    try {
+      const [activeTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+      if (activeTab && activeTab.url && !await isSiteAllowed(activeTab.url)) return;
+    } catch (_) { /* ignore */ }
+  }
 
   try { chrome.downloads.cancel(item.id); } catch (_) { /* may already be done */ }
   try { chrome.downloads.erase({ id: item.id }); } catch (_) { /* ignore */ }
@@ -580,6 +623,11 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
   if (msg.action === 'interceptedLink') {
     (async () => {
+      const pageUrl = sender.tab ? sender.tab.url : null;
+      if (pageUrl && !await isSiteAllowed(pageUrl)) {
+        sendResponse({ ok: false, filtered: true });
+        return;
+      }
       const tabId = sender.tab ? sender.tab.id : -1;
       await askCategoryAndAdd(tabId, msg.url, extractTorrentName(msg.url));
       sendResponse({ ok: true });

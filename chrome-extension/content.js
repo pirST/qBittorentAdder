@@ -234,10 +234,54 @@
   }
 
   // ============================================
+  // SITE FILTER (cached for sync access in click handler)
+  // ============================================
+
+  let siteFilterMode = 'disabled';
+  let siteList = '';
+
+  function loadSiteFilter() {
+    chrome.storage.local.get('config', (result) => {
+      const config = result.config || {};
+      siteFilterMode = config.siteFilterMode || 'disabled';
+      siteList = config.siteList || '';
+    });
+  }
+
+  function isSiteAllowedSync() {
+    if (siteFilterMode === 'disabled') return true;
+    if (!siteList.trim()) return true;
+
+    const hostname = location.hostname.toLowerCase();
+    const domains = siteList.split('\n')
+      .map(d => d.trim().toLowerCase())
+      .filter(d => d && !d.startsWith('#'));
+
+    let matches = false;
+    for (const domain of domains) {
+      if (hostname === domain || hostname.endsWith('.' + domain)) {
+        matches = true;
+        break;
+      }
+    }
+
+    if (siteFilterMode === 'allowlist') return matches;
+    if (siteFilterMode === 'blocklist') return !matches;
+    return true;
+  }
+
+  loadSiteFilter();
+  chrome.storage.onChanged.addListener((changes) => {
+    if (changes.config) loadSiteFilter();
+  });
+
+  // ============================================
   // LINK CLICK INTERCEPTION
   // ============================================
 
   document.addEventListener('click', (e) => {
+    if (!isSiteAllowedSync()) return;
+
     let target = e.target;
     while (target && target.tagName !== 'A') {
       target = target.parentElement;
