@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "qBittorrent Adder",
+  "version": "1.0.0",
+  "description": "Add magnet links and .torrent files to qBittorrent via Web UI with category selection",
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "notifications",
+    "downloads",
+    "cookies",
+    "declarativeNetRequest"
+  ],
+  "host_permissions": [
+    "*://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

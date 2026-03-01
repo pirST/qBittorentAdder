@@ -1,0 +1,184 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  color: #333;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+header {
+  margin-bottom: 24px;
+}
+
+header h1 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+}
+
+.card {
+  background: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid #ddd;
+}
+
+.card h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.field {
+  margin-bottom: 14px;
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #555;
+}
+
+.field input[type="text"],
+.field input[type="password"] {
+  width: 100%;
+  padding: 8px 10px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  color: #333;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.field input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.hint {
+  display: block;
+  font-size: 11px;
+  color: #888;
+  margin-top: 3px;
+}
+
+.hint-inline {
+  font-size: 11px;
+  color: #888;
+  margin-left: 4px;
+}
+
+.field-row {
+  margin-bottom: 10px;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.toggle input {
+  display: none;
+}
+
+.toggle-slider {
+  width: 38px;
+  height: 20px;
+  background: #ccc;
+  border-radius: 10px;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.toggle-slider::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle input:checked + .toggle-slider {
+  background: #007bff;
+}
+
+.toggle input:checked + .toggle-slider::after {
+  left: 20px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid #007bff;
+  color: #007bff;
+}
+
+.btn-outline:hover {
+  background: rgba(0, 123, 255, 0.1);
+}
+
+.test-result {
+  font-size: 13px;
+  margin-left: 10px;
+}
+
+.test-result.ok { color: #155724; }
+.test-result.err { color: #721c24; }
+
+.save-status {
+  font-size: 13px;
+  color: #155724;
+}

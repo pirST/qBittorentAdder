@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>qBittorrent Adder — Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>qBittorrent Adder Settings</h1>
+    </header>
+
+    <section class="card">
+      <h2>Connection</h2>
+      <div class="field">
+        <label for="url">qBittorrent Web UI URL</label>
+        <input type="text" id="url" placeholder="http://localhost:8080">
+        <span class="hint">Address of qBittorrent Web UI (no trailing slash)</span>
+      </div>
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password">
+      </div>
+      <button class="btn btn-outline" id="btn-test">Test Connection</button>
+      <span class="test-result" id="test-result"></span>
+    </section>
+
+    <section class="card">
+      <h2>Download Settings</h2>
+      <div class="field">
+        <label for="savePath">Default Save Path</label>
+        <input type="text" id="savePath" placeholder="/downloads/torrents">
+        <span class="hint">Leave empty to use qBittorrent default. Overrides category save path when set.</span>
+      </div>
+      <div class="field">
+        <label for="category">Default Category</label>
+        <input type="text" id="category" placeholder="">
+        <span class="hint">Default category when none is selected in popup</span>
+      </div>
+      <div class="field-row">
+        <label class="toggle">
+          <input type="checkbox" id="autoStart" checked>
+          <span class="toggle-slider"></span>
+          Auto-start downloads
+        </label>
+      </div>
+      <div class="field-row">
+        <label class="toggle">
+          <input type="checkbox" id="autoTMM" checked>
+          <span class="toggle-slider"></span>
+          Automatic Torrent Management
+          <span class="hint-inline">Let qBittorrent manage save paths by category</span>
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Behavior</h2>
+      <div class="field-row">
+        <label class="toggle">
+          <input type="checkbox" id="showNotifications" checked>
+          <span class="toggle-slider"></span>
+          Show notifications
+        </label>
+      </div>
+      <div class="field-row">
+        <label class="toggle">
+          <input type="checkbox" id="showConfirmation" checked>
+          <span class="toggle-slider"></span>
+          Show confirmation dialog before adding
+          <span class="hint-inline">When clicking magnet/torrent links on pages</span>
+        </label>
+      </div>
+    </section>
+
+    <div class="actions">
+      <span class="save-status" id="save-status"></span>
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

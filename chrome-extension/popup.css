@@ -1,0 +1,357 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 0;
+    width: 380px;
+    margin: 0;
+    background: #fff;
+    color: #333;
+}
+
+.popup {
+    padding: 10px;
+}
+
+/* ========== HEADER ========== */
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo h1 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #666;
+}
+
+.dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.dot-unknown { background: #999; }
+.dot-ok { background: #4caf50; animation: pulse 2s infinite; }
+.dot-err { background: #dc3545; }
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* ========== TABS ========== */
+
+.tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.tab-btn {
+    flex: 1;
+    background: #f0f0f0;
+    color: #555;
+    border: 1px solid #ddd;
+    padding: 6px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.tab-btn.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ========== COMMON ELEMENTS ========== */
+
+.section {
+    margin-bottom: 10px;
+}
+
+.label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 4px;
+}
+
+input[type="text"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 13px;
+    color: #333;
+    background: #fff;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+select {
+    cursor: pointer;
+}
+
+select option {
+    background: #fff;
+    color: #333;
+}
+
+/* ========== FILE DROP ========== */
+
+.file-drop {
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #f9f9f9;
+}
+
+.file-drop:hover,
+.file-drop.dragover {
+    border-color: #007bff;
+    background: rgba(0, 123, 255, 0.05);
+}
+
+.file-drop-text {
+    color: #888;
+    font-size: 12px;
+}
+
+.file-drop.has-file {
+    border-color: #28a745;
+    background: #d4edda;
+}
+
+.file-drop.has-file .file-drop-text {
+    color: #155724;
+    font-weight: 500;
+}
+
+/* ========== BUTTONS ========== */
+
+.btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.btn:hover {
+    background: #0056b3;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: #0056b3;
+}
+
+.btn-full {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #007bff;
+    color: #007bff;
+    padding: 5px 10px;
+}
+
+.btn-outline:hover {
+    background: rgba(0, 123, 255, 0.1);
+}
+
+/* ========== MESSAGES ========== */
+
+.message {
+    margin-top: 8px;
+    font-size: 12px;
+    text-align: center;
+    min-height: 16px;
+    padding: 0;
+    border-radius: 3px;
+}
+
+.message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 5px;
+}
+
+.message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 5px;
+}
+
+.message.info {
+    color: #007bff;
+}
+
+/* ========== LOADING SPINNER ========== */
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.btn-primary.loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn-primary.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    top: 50%;
+    left: 50%;
+    margin: -8px 0 0 -8px;
+}
+
+/* ========== SETTINGS TAB ========== */
+
+.card {
+    background: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+}
+
+.card h3 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #333;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #ddd;
+}
+
+.field {
+    margin-bottom: 10px;
+}
+
+.field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 4px;
+}
+
+.hint {
+    display: block;
+    font-size: 11px;
+    color: #888;
+    margin-top: 3px;
+}
+
+.field-row {
+    margin-bottom: 8px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 13px;
+    gap: 6px;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin: 0;
+    width: auto;
+    cursor: pointer;
+    accent-color: #007bff;
+}
+
+.checkbox-label span {
+    color: #555;
+    font-size: 13px;
+}
+
+.test-result {
+    font-size: 12px;
+    margin-left: 8px;
+}
+
+.test-result.ok {
+    color: #155724;
+}
+
+.test-result.err {
+    color: #721c24;
+}
