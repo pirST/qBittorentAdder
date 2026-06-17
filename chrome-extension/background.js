@@ -150,27 +150,69 @@ async function qbitFetch(endpoint, options = {}) {
   return resp;
 }
 
+function isQbitOk(status, body = '') {
+  const text = (body || '').trim();
+  const normalized = text.toLowerCase();
+
+  // qBittorrent explicit failure text
+  if (normalized === 'fails.' || normalized === 'fails') return false;
+
+  // In practice qBittorrent variants return different successful 2xx responses
+  // (200 with "Ok.", "Ok", empty body; or 204/202 depending on setup/proxy).
+  if (status >= 200 && status < 300) return true;
+
+  return false;
+}
+
+let lastAuthError = null;
+
 async function qbitLogin() {
   const config = await getConfig();
-  if (!config.url || !config.username) return false;
+  if (!config.url) {
+    lastAuthError = 'Server address is not set';
+    return false;
+  }
+  if (!config.username) {
+    lastAuthError = 'Username is not set';
+    return false;
+  }
 
   const body = `username=${encodeURIComponent(config.username)}&password=${encodeURIComponent(config.password)}`;
 
-  const resp = await fetch(`${config.url}/api/v2/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body
-  });
+  let resp;
+  try {
+    resp = await fetch(`${config.url}/api/v2/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body
+    });
+  } catch (e) {
+    lastAuthError = `Cannot reach server (${e.message}). Check the address and that the WebUI is running.`;
+    return false;
+  }
 
-  const text = await resp.text();
-  if (resp.status === 200 && text === 'Ok.') {
+  const text = (await resp.text()).trim();
+  if (isQbitOk(resp.status, text)) {
+    lastAuthError = null;
     // Set-Cookie header is not readable via fetch API.
     // Use chrome.cookies API to retrieve the SID the server just set.
     const sid = await getSidFromCookies();
     if (sid) {
       sidValue = sid;
+    } else if (resp.status === 204) {
+      // Some qBittorrent setups return 204 and keep session cookie handling internal.
+      // Verify with an authenticated endpoint in ensureAuth().
+      sidValue = null;
     }
     return true;
+  }
+
+  if (resp.status === 200 && text === 'Fails.') {
+    lastAuthError = 'Wrong username or password';
+  } else if (resp.status === 403) {
+    lastAuthError = 'Your IP is banned by qBittorrent (too many failed attempts). Wait a few minutes or restart qBittorrent.';
+  } else {
+    lastAuthError = `Unexpected server response: HTTP ${resp.status} ${text}`;
   }
   return false;
 }
@@ -183,7 +225,10 @@ async function ensureAuth() {
   if (sidValue) {
     try {
       const resp = await qbitFetch('/api/v2/app/version');
-      if (resp.status === 200) return true;
+      if (resp.status === 200) {
+        lastAuthError = null;
+        return true;
+      }
     } catch (_) { /* need login */ }
   }
 
@@ -202,7 +247,7 @@ async function getCategories() {
 
 async function addTorrentByUrl(magnetUrl, category = '') {
   if (!await ensureAuth()) {
-    return { success: false, error: 'Authentication failed' };
+    return { success: false, error: lastAuthError || 'Authentication failed' };
   }
 
   const config = await getConfig();
@@ -224,7 +269,7 @@ async function addTorrentByUrl(magnetUrl, category = '') {
     });
     let text = await resp.text();
 
-    if (resp.status === 200 && text === 'Ok.') {
+    if (isQbitOk(resp.status, text)) {
       return { success: true };
     }
 
@@ -237,7 +282,7 @@ async function addTorrentByUrl(magnetUrl, category = '') {
           body: formData
         });
         text = await resp.text();
-        if (resp.status === 200 && text === 'Ok.') {
+        if (isQbitOk(resp.status, text)) {
           return { success: true };
         }
       }
@@ -250,7 +295,7 @@ async function addTorrentByUrl(magnetUrl, category = '') {
 
 async function addTorrentByFile(fileBytes, fileName, category = '') {
   if (!await ensureAuth()) {
-    return { success: false, error: 'Authentication failed' };
+    return { success: false, error: lastAuthError || 'Authentication failed' };
   }
 
   const config = await getConfig();
@@ -272,7 +317,7 @@ async function addTorrentByFile(fileBytes, fileName, category = '') {
       body: formData
     });
     const text = await resp.text();
-    if (resp.status === 200 && text === 'Ok.') {
+    if (isQbitOk(resp.status, text)) {
       return { success: true };
     }
     return { success: false, error: humanizeAddError(resp.status, text) };
@@ -304,7 +349,7 @@ async function downloadAndAddTorrent(url, fallbackName, category = '') {
 async function testConnection() {
   try {
     const ok = await ensureAuth();
-    if (!ok) return { success: false, error: 'Authentication failed' };
+    if (!ok) return { success: false, error: lastAuthError || 'Authentication failed' };
     const resp = await qbitFetch('/api/v2/app/version');
     if (resp.status === 200) {
       const version = await resp.text();
